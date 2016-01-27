@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include "opencv/cv.h"
+#include "opencv/highgui.h"
+#include "opencv/cxcore.h"
+
+int main(void){
+    CvCapture* capture = cvCaptureFromCAM(0);
+    cvNameWindow("video", 1);
+
+    double fps = cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
+    CvSize frame_size = cvSize((int)cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH), (int)cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT));
+    CvVideoWriter* writer = cvCreateVideoWriter("out.avi", -1, fps, frame_size, 1);
+
+    IpImage* frame;
+    while(1){
+        frame = cvQueryFrame(capture);
+        cvShowImage("video", frame);
+        if(cvWaitKey(38) == 27){
+            break;
+        }
+    }
+
+    cvReleaseVideoWriter(&writer);
+    cvReleaseCapture(&capture);
+    cvDestroyWindow("video");
+
+    return 0;
+}
